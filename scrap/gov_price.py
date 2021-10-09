@@ -7,7 +7,7 @@ import time
 
 def main(
     url='https://onemotoring.lta.gov.sg/content/onemotoring/home/buying/upfront-vehicle-costs/open-market-value--omv-.html', 
-    save_path='./data/gov_prcie.csv',
+    save_path='./data/gov_price.csv',
     year_range=[2002, 2022],
     ):
     results = []

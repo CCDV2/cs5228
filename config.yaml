@@ -1,0 +1,26 @@
+# action modules will be called subsequentially
+actions: ["preprocess"]
+
+scrap:
+  gov_price: 
+    url: "https://onemotoring.lta.gov.sg/content/onemotoring/home/buying/upfront-vehicle-costs/open-market-value--omv-.html"
+    save_path: "./data/gov_price.csv"
+    year_range: [2002, 2022]
+preprocess:
+  # preprocess data
+  train: # file name under preprocess module
+    # procedure will be like: update -> add -> drop
+    
+    # if path is not specified, then directly find correspond csv under ./data
+    # path: "./data/train.csv"
+
+    # if column name is not specified, then get its name as default
+    reg_date: "reg_date_customized"
+          
+    _add: []
+    _drop: ["opc_scheme"]
+    save_path: "./data/train_processed.csv"
+  test:
+    save_path: "./data/test_processed.csv"
+  gov_price: 
+    save_path: "./data/gov_price_processed.csv"
