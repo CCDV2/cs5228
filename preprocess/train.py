@@ -109,9 +109,6 @@ def depreciation(df: pd.DataFrame):
     # fill missing values with mean value
     utils.fill_with_mean(df["depreciation"])
 
-    # equal-width discretization into #num segments
-    df["depreciation"] = utils.data_discretization(df["depreciation"], num=15)
-
 
 def coe(df: pd.DataFrame):
     # delete outliers
@@ -136,13 +133,13 @@ def dereg_value(df: pd.DataFrame):
 
 def mileage(df: pd.DataFrame):
     # delete outliers
-    df[mileage] = utils.del_outlier(df[mileage])
+    df["mileage"] = utils.del_outlier(df["mileage"])
 
     # fill missing values with mean value
     utils.fill_with_mean(df["mileage"])
 
     # equal width discretization into #num segments
-    df[mileage] = utils.data_discretization(df[mileage], num=15)
+    df["mileage"] = utils.data_discretization(df["mileage"], num=15)
 
 
 def omv(df: pd.DataFrame):

@@ -16,6 +16,6 @@ def del_outlier(column: pd.Series):
 def fill_with_mean(column: pd.Series):
     column.fillna(round(column.mean()), inplace=True)
 
-def data_discretization(column: pd.Series, num: int):
+def data_discretization(column: pd.Series, num: int=15):
     new_column = pd.cut(column, num, labels=range(1, num+1))
     return new_column
