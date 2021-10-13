@@ -1,5 +1,5 @@
 # action modules will be called subsequentially
-actions: ["preprocess"]
+actions: ["predict"]
 
 scrap:
   gov_price: 
@@ -27,3 +27,18 @@ preprocess:
     save_path: "./data/test_processed.csv"
   gov_price: 
     save_path: "./data/gov_price_processed.csv"
+predict:
+  dataset: "SimpleDataset"
+
+  SimpleDataset:
+    path: './data/train_processed.csv'
+    test_path: './data/test_processed.csv' # comment this line to make train-val split on trian set
+
+  model: "LogisticRegressionModel"
+
+  LogisticRegressionModel:
+    C: 1.0
+    max_iter: 500
+
+  metric: "MSE"
+  dump_path: './data/predict.csv'
