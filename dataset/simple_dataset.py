@@ -13,7 +13,8 @@ class SimpleDataset:
         df = pd.read_csv(path)
         if seed is not None:
             np.random.seed(seed)
-        np.random.shuffle(df.values)
+        if not test_path:
+            np.random.shuffle(df.values)
         self.raw_data = df
         self.xs = df[kwargs.get('xcols', SimpleDataset.xcols)].values
         ycol = kwargs.get('ycol', SimpleDataset.ycol)
