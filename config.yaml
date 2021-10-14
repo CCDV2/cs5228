@@ -34,11 +34,14 @@ predict:
     path: './data/train_processed.csv'
     test_path: './data/test_processed.csv' # comment this line to make train-val split on trian set
 
-  model: "LogisticRegressionModel"
+  model: "GradientBoostingRegressionModel"
 
   LogisticRegressionModel:
     C: 1.0
     max_iter: 500
-
+  GradientBoostingRegressionModel:
+    learning_rate: 0.1
   metric: "MSE"
+  MSE:
+    squared: False
   dump_path: './data/predict.csv'
