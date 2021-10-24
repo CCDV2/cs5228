@@ -3,10 +3,12 @@ import numpy as np
 from pandas.core.algorithms import SelectNFrame
 import torch
 
+
 class SimpleDataset:
-    xcols = ['category', 'transmission', 'curb_weight', 'power',
-            'engine_cap', 'no_of_owners', 'depreciation', 'coe', 'road_tax', 'dereg_value', 'mileage', 'omv', 'arf']
+    xcols = ['category', 'transmission', 'curb_weight', 'power', 'engine_cap', 'no_of_owners',
+             'depreciation', 'coe', 'road_tax', 'dereg_value', 'mileage', 'omv', 'arf']
     ycol = 'price'
+
     def __init__(self, path, test_path='', frac=0.8, seed=None, is_train=True, **kwargs) -> None:
         if test_path and not is_train:
             path = test_path
@@ -30,7 +32,7 @@ class SimpleDataset:
             else:
                 self.xs = self.xs[part:]
                 self.ys = self.ys[part:]
-        
+
         self.xs = torch.from_numpy(self.xs)
         self.ys = torch.from_numpy(self.ys)
 

@@ -41,6 +41,7 @@ predict:
     max_iter: 500
   GradientBoostingRegressionModel:
     learning_rate: 0.1
+    n_estimators: 1000
   RandomForestRegressionModel:
     n_estimators: 1000
   metric: "MSE"

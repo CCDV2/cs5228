@@ -4,32 +4,39 @@ import numpy as np
 import time
 from . import utils
 
+
 def listing_id(df: pd.DataFrame):
     # del
     pass
+
 
 def title(df: pd.DataFrame):
     # del
     pass
 
+
 def make(df: pd.DataFrame):
     # fill missing values by checking the attribute 'title'
     df['make'] = df.apply(
-        lambda row: row['title'].split()[0].lower() if pd.isna(row['make']) else row['make'],
+        lambda row: row['title'].split()[0].lower(
+        ) if pd.isna(row['make']) else row['make'],
         axis=1
     )
+    df['make'] = utils.ordinal_encoder(df['make'])
 
 
 def model(df: pd.DataFrame):
     pass
 
+
 def description(df: pd.DataFrame):
     # del
     pass
 
+
 def manufactured(df: pd.DataFrame):
     # fill missing values with other cars of the same model
-    miss_bool = df.manufactured.isnull() 
+    miss_bool = df.manufactured.isnull()
     df_tmp = df.dropna(
         subset=["model", "manufactured"]
     ).drop_duplicates(
@@ -42,7 +49,8 @@ def manufactured(df: pd.DataFrame):
     # fill missing values with original_reg_date or reg_date
     df['manufactured'] = df.apply(
         lambda row: time.strptime(
-            row['reg_date'] if pd.isna(row['original_reg_date']) else row['original_reg_date'], '%d-%b-%Y'
+            row['reg_date'] if pd.isna(
+                row['original_reg_date']) else row['original_reg_date'], '%d-%b-%Y'
         ).tm_year if pd.isna(row['manufactured']) or row['manufactured'] > 2022 else row['manufactured'],
         axis=1
     )
@@ -69,7 +77,8 @@ def reg_date_customized(df: pd.DataFrame):
 
 
 def type_of_vehicle(df: pd.DataFrame):
-    pass
+    df['type_of_vehicle'] = utils.ordinal_encoder(df['type_of_vehicle'])
+
 
 def category(df: pd.DataFrame):
     # ordinal encoding
@@ -95,6 +104,7 @@ def fuel_type(df: pd.DataFrame):
     # del
     pass
 
+
 def engine_cap(df: pd.DataFrame):
     # fill missing values with mean value
     utils.fill_with_mean(df["engine_cap"])
@@ -106,13 +116,15 @@ def no_of_owners(df: pd.DataFrame):
 
 
 def depreciation(df: pd.DataFrame):
+    df["depreciation"] = utils.del_outlier(
+        df["depreciation"], lower_val=0.0, upper_val=0.99)
     # fill missing values with mean value
     utils.fill_with_mean(df["depreciation"])
 
 
 def coe(df: pd.DataFrame):
     # delete outliers
-    df["coe"] = utils.del_outlier(df["coe"])
+    df["coe"] = utils.del_outlier(df["coe"], lower_val=0.01, upper_val=1.0)
 
     # fill missing values with mean value
     utils.fill_with_mean(df["coe"])
@@ -132,9 +144,6 @@ def dereg_value(df: pd.DataFrame):
 
 
 def mileage(df: pd.DataFrame):
-    # delete outliers
-    df["mileage"] = utils.del_outlier(df["mileage"])
-
     # fill missing values with mean value
     utils.fill_with_mean(df["mileage"])
 
@@ -156,25 +165,31 @@ def opc_scheme(df: pd.DataFrame):
     # del
     pass
 
+
 def lifespan(df: pd.DataFrame):
     # del
     pass
+
 
 def eco_category(df: pd.DataFrame):
     # del
     pass
 
+
 def features(df: pd.DataFrame):
     # del
     pass
+
 
 def accessories(df: pd.DataFrame):
     # del
     pass
 
+
 def indicative_price(df: pd.DataFrame):
     # del
     pass
+
 
 def price(df: pd.DataFrame):
     pass
