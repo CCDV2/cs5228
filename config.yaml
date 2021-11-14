@@ -47,7 +47,7 @@ predict:
   SimpleDataset:
     path: './data/train_processed.csv'
     seed: 0
-    # test_path: './data/test_processed.csv' # comment this line to make train-val split on trian set
+    test_path: './data/test_processed.csv' # comment this line to make train-val split on trian set
 
   dataloader:
     batch_size: 128
