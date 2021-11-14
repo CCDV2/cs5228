@@ -2,6 +2,8 @@ from os import X_OK
 import pandas as pd
 import numpy as np
 import time
+
+import json
 from . import utils
 
 
@@ -24,6 +26,9 @@ def make(df: pd.DataFrame):
     )
     df['make'] = utils.ordinal_encoder(df['make'])
 
+def make_oh(df: pd.DataFrame):
+    oh = pd.get_dummies(df['make'])
+    return oh
 
 def model(df: pd.DataFrame):
     pass
@@ -79,16 +84,48 @@ def reg_date_customized(df: pd.DataFrame):
 def type_of_vehicle(df: pd.DataFrame):
     df['type_of_vehicle'] = utils.ordinal_encoder(df['type_of_vehicle'])
 
+def type_of_vehicle_oh(df: pd.DataFrame):
+    oh = pd.get_dummies(df['type_of_vehicle'])
+    return oh
+
 
 def category(df: pd.DataFrame):
     # ordinal encoding
     df['category'] = utils.ordinal_encoder(df['category'])
+
+def category_oh(df: pd.DataFrame):
+    oh = pd.get_dummies(df['category'])
+    return oh
+
+def category_multilabel(df: pd.DataFrame):
+    categoires = {}
+    cnt = 0
+    for i, row in df.iterrows():
+        cats = row['category']
+        cats_list = cats.split(',')
+        for cat in cats_list:
+            cat = cat.strip()
+            if cat not in categoires:
+                categoires[cat] = cnt
+                cnt += 1
+    a = np.zeros((len(df), cnt), dtype=np.int32)
+    for i, row in df.iterrows():
+        cats = row['category']
+        cats_list = cats.split(',')
+        idx = [categoires[cat.strip()] for cat in cats_list]
+        a[i, idx] = 1
+    multilabel_df = pd.DataFrame(a, columns=list(categoires.keys()))
+    return multilabel_df
+
 
 
 def transmission(df: pd.DataFrame):
     # ordinal encoding
     df['transmission'] = utils.ordinal_encoder(df['transmission'])
 
+def transmission_oh(df: pd.DataFrame):
+    oh = pd.get_dummies(df['transmission'])
+    return oh
 
 def curb_weight(df: pd.DataFrame):
     # fill missing values with mean value
@@ -193,3 +230,57 @@ def indicative_price(df: pd.DataFrame):
 
 def price(df: pd.DataFrame):
     pass
+
+
+def _vague_match(s: str, patterns):
+    def to_words(s: str):
+        s = s.replace('-', ' ').replace('(', ' ').replace(')', ' ')
+        return s.split()
+
+    def similarity(words, pattern):
+        sim = 0
+        for w in words:
+            for p in pattern:
+                if w in p:
+                    sim += 1
+                    break
+        return sim
+
+    words = to_words(s)
+    words_patterns = [(to_words(p), i) for i, p in enumerate(patterns)]
+    similarity = [(similarity(words, wp), wp, i) for wp, i in words_patterns]
+    similarity.sort(reverse=True)
+    return patterns[similarity[0][2]]
+
+def import_price(df: pd.DataFrame):
+    with open('./data/brand_mapping.json', 'r') as f:
+        brand_mapping = json.load(f)
+    with open('./data/gov_price.json', 'r') as f:
+        d = json.load(f)
+    def add_import_price(row):
+        title = row['title'].lower()
+        make = row['make']
+        try:
+            if type(make) is float:
+                make = title.split()[0]
+            if make not in d:
+                if make in brand_mapping:
+                    make = brand_mapping[make]
+                    if make == 'others': return 0
+                else:
+                    return 0
+        except Exception as e:
+            print(e, title, make)
+            return 0
+        model = _vague_match(title, list(d[make].keys()))
+        price = list(d[make][model].values())[-1]
+        return price
+
+    df['import_price'] = df.apply(add_import_price, axis=1)
+
+def scale_factor(df: pd.DataFrame):
+    df['scale_factor'] = df['price'] / df['import_price']
+    df['scale_factor'] = df.apply(
+        lambda x: None if x['scale_factor'] is None or x['scale_factor'] > 10 else x.scale_factor, axis=1)
+    utils.fill_with_mean(df['scale_factor'])
+    # df['scale_factor'].fillna(0, inplace=True)

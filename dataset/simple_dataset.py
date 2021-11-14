@@ -5,8 +5,6 @@ import torch
 
 
 class SimpleDataset:
-    xcols = ['category', 'transmission', 'curb_weight', 'power', 'engine_cap', 'no_of_owners',
-             'depreciation', 'coe', 'road_tax', 'dereg_value', 'mileage', 'omv', 'arf']
     ycol = 'price'
 
     def __init__(self, path, test_path='', frac=0.8, seed=None, is_train=True, **kwargs) -> None:
@@ -18,7 +16,7 @@ class SimpleDataset:
         if not test_path:
             np.random.shuffle(df.values)
         self.raw_data = df
-        self.xs = df[kwargs.get('xcols', SimpleDataset.xcols)].values
+        self.xs = df[df.columns.difference([kwargs.get('ycol', SimpleDataset.ycol)])].values
         ycol = kwargs.get('ycol', SimpleDataset.ycol)
         if ycol in df:
             self.ys = df[ycol].values
